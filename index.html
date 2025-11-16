@@ -23,7 +23,7 @@
     -moz-osx-font-smoothing:grayscale;
   }
 
-  /* --- background static (your uploaded static.jpg) --- */
+  /* --- background static --- */
   .bg-static{
     position:fixed;
     inset:0;
@@ -43,7 +43,7 @@
     100% { opacity:0.5; transform: translateZ(0) scale(1); }
   }
 
-  /* --- scribble overlay (your uploaded scribble.png) --- */
+  /* --- scribble overlay --- */
   .scribble{
     position:fixed;
     width:380px;
@@ -83,7 +83,7 @@
     100% { transform: translate(20px,-14px) rotate(9deg); }
   }
 
-  /* --- subtle bleed-through ghost text behind content --- */
+  /* --- bleed-through ghost text --- */
   .bleed {
     position: fixed;
     inset: 0;
@@ -174,7 +174,7 @@
     font-size:1.05rem;
   }
 
-  /* --- glitchy text effect (occasional flash) --- */
+  /* --- glitchy text effect --- */
   .glitch {
     display:block;
     position:relative;
@@ -188,7 +188,7 @@
     100% { text-shadow:none; transform:none; }
   }
 
-  /* --- visible glitch clickable zone (hidden until triggered) --- */
+  /* --- visible glitch clickable zone --- */
   #glitchZone {
     position: fixed;
     width: 180px;
@@ -206,7 +206,6 @@
     visibility:hidden;
   }
 
-  /* when revealed, we want an aggressive burst effect */
   .reveal-burst #glitchZone {
     visibility:visible;
     opacity:1;
@@ -220,7 +219,6 @@
     100% { box-shadow: none; transform: scale(1); }
   }
 
-  /* --- aggressive screen glitch burst: body gets short violent shakes & hue shifts --- */
   .burst {
     animation: screenBurst 0.9s linear;
   }
@@ -257,35 +255,44 @@
     box-shadow:0 4px 18px rgba(0,0,0,0.6);
   }
 
-  /* responsive */
+  /* --- centered eye with float + drift + smooth blink --- */
+  #eye {
+    position: fixed;
+    bottom: 40px;
+    left: 50%;
+    width: 160px;
+    opacity: 0;
+    z-index: 9999;
+    pointer-events: auto;
+    transition: opacity 1s ease;
+    transform: translateX(-50%) translateY(var(--eyeY,0));
+    animation: floatDrift 3.5s ease-in-out infinite alternate;
+  }
+
+  @keyframes floatDrift {
+    0%   { --eyeY: 0px; transform: translateX(-50%) translateY(var(--eyeY)) rotate(0deg); }
+    25%  { --eyeY: -3px; transform: translateX(-48%) translateY(var(--eyeY)) rotate(-0.2deg); }
+    50%  { --eyeY: 0px; transform: translateX(-50%) translateY(var(--eyeY)) rotate(0deg); }
+    75%  { --eyeY: -2px; transform: translateX(-52%) translateY(var(--eyeY)) rotate(0.1deg); }
+    100% { --eyeY: 0px; transform: translateX(-50%) translateY(var(--eyeY)) rotate(0deg); }
+  }
+
+  .blink {
+    animation: blinkAnim 0.18s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+  }
+
+  @keyframes blinkAnim {
+    0%   { transform: translateX(-50%) translateY(var(--eyeY,0)) scaleY(1) scaleX(1); }
+    25%  { transform: translateX(-50%) translateY(var(--eyeY,0)) scaleY(0.25) scaleX(1.1); }
+    50%  { transform: translateX(-50%) translateY(var(--eyeY,0)) scaleY(1.05) scaleX(0.95); }
+    100% { transform: translateX(-50%) translateY(var(--eyeY,0)) scaleY(1) scaleX(1); }
+  }
+
   @media(max-width:600px){
     .container{ margin:4vh 12px; padding:22px; font-size:0.98rem;}
     .scribble{ display:none }
     #glitchZone{ width:140px; height:140px; bottom:10%; right:5% }
-  }
-
-  /* --- Eye styles --- */
-  #eye {
-    position: fixed;
-    bottom: 12%; /* adjust as needed */
-    right: 6%;   /* adjust as needed */
-    width: 160px;
-    opacity: 0;
-    z-index:500; /* above most content but below hidden diary overlay */
-    cursor:pointer;
-    pointer-events:auto;
-    transform: scale(1);
-    transform-origin: center bottom;
-    transition: opacity 1s ease;
-  }
-
-  .blink {
-    animation: blinkAnim 0.25s linear forwards;
-  }
-  @keyframes blinkAnim {
-    0%   { transform: scaleY(1); }
-    50%  { transform: scaleY(0.2); }
-    100% { transform: scaleY(1); }
+    #eye{ width:120px; bottom:32px; }
   }
 </style>
 </head>
@@ -316,7 +323,7 @@
     </div>
   </main>
 
-  <!-- Glitch reveal clickable zone (appears after delay) -->
+  <!-- Glitch reveal clickable zone -->
   <div id="glitchZone" title="Glitch"></div>
 
   <!-- Hidden diary overlay -->
@@ -326,11 +333,11 @@
     <p>“'i' thought that the Neutral Faction is TRULY NEUTRAL, but NO.. they arent. Maybe in some occassion they are especially knowing that.. they are the one who helped to achieve the peace and ending the war after the conference.. but thats what most of peoples know, theres more in it.. those other stories that they do not know, deep buried in lies.. 'i' saw it with 'my' very own eyes, they slaughtered the Edelyn family without hesitation, driven by uncontrolable anger and other feelings, why bring the childrens too? why pull them, who doesnt kno anything, into your despair? Bloodbath happend, not just that.. some are still working with Light and Dark, doing something unimagineable...”</p>
   </section>
 
-  <!-- EYE -->
+  <!-- Centered blinking eye -->
   <img id="eye" src="eye.png" alt="eye">
 
 <script>
-  // Original glitch zone script
+  // After 12s, trigger an aggressive reveal burst and show glitch zone
   const glz = document.getElementById('glitchZone');
   const body = document.body;
   setTimeout(() => {
@@ -348,6 +355,7 @@
     ], { duration: 900, iterations: 1, easing: 'cubic-bezier(.36,.07,.19,.97)' });
   }, 12000);
 
+  // click opens the hidden diary overlay
   glz.addEventListener('click', () => {
     const hidden = document.getElementById('hidden');
     hidden.style.display = 'block';
@@ -356,6 +364,7 @@
     setTimeout(()=> hidden.style.opacity = '1', 50);
   });
 
+  // close button
   document.getElementById('closeBtn').addEventListener('click', () => {
     const hidden = document.getElementById('hidden');
     hidden.style.opacity = '0';
@@ -363,6 +372,7 @@
     setTimeout(()=> hidden.style.display='none', 400);
   });
 
+  // accessibility: allow Escape to close
   document.addEventListener('keydown', e => {
     if(e.key === 'Escape') {
       const hidden = document.getElementById('hidden');
@@ -375,33 +385,18 @@
   });
 
   // --- EYE SCRIPT ---
-  setTimeout(() => {
-    const eye = document.getElementById("eye");
-    eye.style.opacity = 1;
-  }, 10000);
+  const eye = document.getElementById('eye');
+  // Fade in eye after 10s
+  setTimeout(()=> { eye.style.opacity = '1'; }, 10000);
 
+  // Blink loop
   function blinkLoop() {
-    const eye = document.getElementById("eye");
-    eye.classList.add("blink");
-    setTimeout(() => eye.classList.remove("blink"), 260);
-    const next = 2000 + Math.random() * 6000;
+    eye.classList.add('blink');
+    setTimeout(()=> eye.classList.remove('blink'), 180);
+    let next = 2500 + Math.random() * 5000; // 2.5–7.5s
     setTimeout(blinkLoop, next);
   }
-  setTimeout(blinkLoop, 10500);
-
-  document.getElementById("eye").onclick = () => {
-    let pw = prompt("Enter the password:");
-    if (!pw) return;
-    if (pw.trim() === "Everdawn") {
-        const hidden = document.getElementById('hidden');
-        hidden.style.display = 'block';
-        hidden.setAttribute('aria-hidden','false');
-        hidden.scrollTop = 0;
-        setTimeout(()=> hidden.style.opacity = '1', 50);
-    } else {
-        alert("Incorrect password.");
-    }
-  };
+  setTimeout(blinkLoop, 11000);
 </script>
 
 </body>
