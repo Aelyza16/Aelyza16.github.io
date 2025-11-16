@@ -8,40 +8,71 @@
     @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap');
 
     body {
-      background: radial-gradient(circle at center, #000 0%, #020202 100%);
-      color: #b8faff;
-      font-family: 'Share Tech Mono', monospace;
-      font-size: 16px;
-      line-height: 1.5;
+      margin: 0;
+      padding: 0;
+      background: #000;
       overflow: hidden;
-      height: 100vh;
+      font-family: 'Share Tech Mono', monospace;
+      color: #b8faff;
+    }
+
+    /* --- Splash / Intro Screen --- */
+    .splash {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: #000;
       display: flex;
       justify-content: center;
       align-items: center;
-      text-shadow: 0 0 4px #00fff2, 0 0 8px #00c8ff;
-      animation: flickerBg 6s infinite alternate;
+      z-index: 10;
+      animation: glitchOut 4s ease-in-out forwards;
     }
 
-    @keyframes flickerBg {
-      0%, 100% { background-color: #010101; }
-      50% { background-color: #000000; }
+    .splash-text {
+      font-size: 24px;
+      text-shadow: 0 0 10px #0ff, 0 0 20px #0ff;
+      opacity: 0;
+      animation: flickerIn 2s ease-in-out 0.5s forwards, textGlitch 1s infinite 3s;
     }
 
+    @keyframes flickerIn {
+      0% { opacity: 0; }
+      100% { opacity: 1; }
+    }
+
+    @keyframes glitchOut {
+      0%, 90% { clip-path: inset(0 0 0 0); }
+      95% { clip-path: inset(10% 0 10% 0); }
+      100% { clip-path: inset(0 0 0 0); opacity: 0; }
+    }
+
+    @keyframes textGlitch {
+      0% { text-shadow: 2px 0 red, -2px 0 blue; }
+      25% { text-shadow: -2px 0 red, 2px 0 blue; }
+      50% { text-shadow: 0 0 4px #0ff; }
+      75% { text-shadow: -1px 0 #f00, 1px 0 #00f; }
+      100% { text-shadow: 0 0 10px #0ff; }
+    }
+
+    /* --- Terminal / Diary Screen --- */
     .terminal {
+      position: relative;
       width: 80%;
       max-width: 800px;
-      background: rgba(0, 0, 0, 0.7);
+      margin: 0 auto;
       padding: 30px;
+      background: rgba(0, 0, 0, 0.8);
       border: 1px solid #0ff;
       box-shadow: 0 0 20px #00ffff33;
-      animation: glitchBorder 2s infinite;
-      position: relative;
-      overflow: hidden;
+      opacity: 0;
+      animation: fadeInTerm 1s forwards 4s;
     }
 
-    @keyframes glitchBorder {
-      0%, 100% { box-shadow: 0 0 20px #00ffff33; }
-      50% { box-shadow: 0 0 30px #00ffdd99; }
+    @keyframes fadeInTerm {
+      to { opacity: 1; }
     }
 
     .glitch {
@@ -71,10 +102,11 @@
 
     .entry {
       opacity: 0;
-      animation: fadeIn 3s forwards;
+      animation: fadeInEntry 3s forwards 5s;
+      line-height: 1.5;
     }
 
-    @keyframes fadeIn {
+    @keyframes fadeInEntry {
       0% { opacity: 0; filter: blur(8px); }
       100% { opacity: 1; filter: blur(0); }
     }
@@ -96,10 +128,22 @@
       mix-blend-mode: overlay;
       z-index: 5;
     }
+
+    /* Hidden diary entries: you can style them similarly but keep display none or very subtle */
+    .hidden-entry {
+      display: none;
+      /* later you can show them by JS or uncomment manually */
+      /* color: #7ff; etc. */
+    }
   </style>
 </head>
 <body>
+  <div class="splash">
+    <div class="splash-text">CORRUPTED FILE: LOADING…</div>
+  </div>
+
   <div class="scanlines"></div>
+
   <div class="terminal">
     <h2 class="glitch">[LOG ENTRY 47A – “LOST RECORD”]</h2>
     <p class="entry">
@@ -114,7 +158,44 @@
       <br><br>
       <i>[Insert your hidden lore and puzzle clue here later.]</i>
     </p>
+
+    <!-- Hidden diary entries for later: -->
+    <div class="hidden-entry" id="entry2">
+      <h3 class="glitch">[LOG ENTRY 48B – REQUIEM]</h3>
+      <p>
+        I remember now. The static was not a bug, but a message.  
+        It spoke of coordinates, of a place beneath the surface where time breaks.  
+      </p>
+    </div>
+    <div class="hidden-entry" id="entry3">
+      <h3 class="glitch">[LOG ENTRY 49C – FINAL]</h3>
+      <p>
+        I don’t know how much longer I can hold on.  
+        The code fractures my mind. But if you read this —  
+        you must go deeper.
+      </p>
+    </div>
+
     <span class="cursor"></span>
   </div>
+
+  <script>
+    // Remove splash after animation
+    window.addEventListener("load", () => {
+      const splash = document.querySelector('.splash');
+      splash.addEventListener('animationend', () => {
+        splash.style.display = 'none';
+      });
+    });
+
+    // (Optional) You can later add JS to show hidden entries:
+    function showEntry(id) {
+      const el = document.getElementById(id);
+      if (el) {
+        el.style.display = 'block';
+      }
+    }
+    // Example: showEntry('entry2'); // call this later from puzzle logic
+  </script>
 </body>
 </html>
