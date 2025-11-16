@@ -63,28 +63,29 @@
         text-shadow: 0 0 3px rgba(255,255,255,0.4);
     }
 
-    /* EYE IMAGE */
+    /* EYE IMAGE (FIXED VERSION) */
     #eye {
         position: fixed;
         bottom: 40px;
         left: 50%;
         transform: translateX(-50%) scale(1);
+        transform-origin: center center;   /* prevents popping */
         width: 160px;
         opacity: 0;
         transition: opacity 1s ease;
-        z-index: 5;
-        pointer-events: auto;
+        z-index: 9999;                     /* forces on top */
+        pointer-events: auto;              /* ensures clickable */
     }
 
-    /* BLINK animation */
+    /* BLINK animation (safer version) */
     .blink {
-        animation: blinkAnim 0.28s linear forwards;
+        animation: blinkAnim 0.25s linear forwards;
     }
 
     @keyframes blinkAnim {
-        0% { transform: translateX(-50%) scaleY(1); }
-        50% { transform: translateX(-50%) scaleY(0.05); }
-        100% { transform: translateX(-50%) scaleY(1); }
+        0% { transform: translate(-50%, 0) scaleY(1); }
+        50% { transform: translate(-50%, 0) scaleY(0.2); }
+        100% { transform: translate(-50%, 0) scaleY(1); }
     }
 
     /* Final popup */
@@ -101,7 +102,7 @@
         color: #fff;
         font-size: 19px;
         line-height: 1.7;
-        z-index: 10;
+        z-index: 10000;
         text-shadow: 0 0 4px rgba(255,255,255,0.3);
     }
 
@@ -152,18 +153,16 @@ setTimeout(() => {
 /* Random blinking loop */
 function blinkLoop() {
     let eye = document.getElementById("eye");
+
     eye.classList.add("blink");
+    setTimeout(() => eye.classList.remove("blink"), 260);
 
-    setTimeout(() => eye.classList.remove("blink"), 300);
-
-    // 2–8 sec random interval
-    let next = 2000 + Math.random() * 6000;
+    let next = 2000 + Math.random() * 6000; // 2–8s
     setTimeout(blinkLoop, next);
 }
 
 /* Start blinking at 12 seconds */
 setTimeout(blinkLoop, 12000);
-
 
 /* Clicking the eye → password prompt */
 document.getElementById("eye").onclick = () => {
@@ -182,7 +181,6 @@ document.getElementById("eye").onclick = () => {
 document.getElementById("closeFinal").onclick = () => {
     document.getElementById("finalLore").style.display = "none";
 };
-
 </script>
 
 </body>
