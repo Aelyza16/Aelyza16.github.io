@@ -23,7 +23,7 @@
     -moz-osx-font-smoothing:grayscale;
   }
 
-  /* --- background static --- */
+  /* --- background static (your uploaded static.jpg) --- */
   .bg-static{
     position:fixed;
     inset:0;
@@ -43,7 +43,7 @@
     100% { opacity:0.5; transform: translateZ(0) scale(1); }
   }
 
-  /* --- scribble overlay --- */
+  /* --- scribble overlay (your uploaded scribble.png) --- */
   .scribble{
     position:fixed;
     width:380px;
@@ -83,7 +83,7 @@
     100% { transform: translate(20px,-14px) rotate(9deg); }
   }
 
-  /* --- bleed-through ghost --- */
+  /* --- subtle bleed-through ghost text behind content --- */
   .bleed {
     position: fixed;
     inset: 0;
@@ -174,7 +174,7 @@
     font-size:1.05rem;
   }
 
-  /* --- glitchy text --- */
+  /* --- glitchy text effect (occasional flash) --- */
   .glitch {
     display:block;
     position:relative;
@@ -188,7 +188,7 @@
     100% { text-shadow:none; transform:none; }
   }
 
-  /* --- glitch zone --- */
+  /* --- visible glitch clickable zone (hidden until triggered) --- */
   #glitchZone {
     position: fixed;
     width: 180px;
@@ -206,7 +206,7 @@
     visibility:hidden;
   }
 
-  /* reveal burst */
+  /* when revealed, we want an aggressive burst effect */
   .reveal-burst #glitchZone {
     visibility:visible;
     opacity:1;
@@ -220,10 +220,10 @@
     100% { box-shadow: none; transform: scale(1); }
   }
 
+  /* --- aggressive screen glitch burst: body gets short violent shakes & hue shifts --- */
   .burst {
     animation: screenBurst 0.9s linear;
   }
-
   @keyframes screenBurst {
     0% { filter:none; transform: translateX(0) translateY(0); }
     10% { filter: hue-rotate(30deg) brightness(1.6) contrast(1.2); transform: translate(-6px, 4px) rotate(-0.4deg); }
@@ -257,32 +257,12 @@
     box-shadow:0 4px 18px rgba(0,0,0,0.6);
   }
 
-  /* ———— RESPONSIVE ———— */
+  /* responsive */
   @media(max-width:600px){
     .container{ margin:4vh 12px; padding:22px; font-size:0.98rem;}
     .scribble{ display:none }
     #glitchZone{ width:140px; height:140px; bottom:10%; right:5% }
   }
-
-  /* ———— ★ ADDED: EYE IMAGE STYLE ★ ———— */
-  #eye {
-    position: fixed;
-    bottom: 20px;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 120px;
-    opacity: 0;
-    transition: opacity 1s ease;
-    z-index: 200; 
-    animation: blink 3s infinite;
-    animation-play-state: paused;
-  }
-
-  @keyframes blink {
-    0%, 20%, 100% { opacity: 1; }
-    10% { opacity: 0; }
-  }
-
 </style>
 </head>
 <body>
@@ -312,10 +292,7 @@
     </div>
   </main>
 
-  <!-- ★ ADDED: EYE IMAGE ELEMENT ★ -->
-  <img id="eye" src="eye.png" alt="eye">
-
-  <!-- Glitch reveal clickable zone -->
+  <!-- Glitch reveal clickable zone (appears after delay) -->
   <div id="glitchZone" title="Glitch"></div>
 
   <!-- Hidden diary overlay -->
@@ -326,194 +303,62 @@
   </section>
 
 <script>
+  // After 12s, trigger an aggressive reveal burst and show glitch zone
+  const glz = document.getElementById('glitchZone');
+  const body = document.body;
+  setTimeout(() => {
+    // Apply burst to body for a short time
+    body.classList.add('burst');
+    body.classList.add('reveal-burst');
 
-  /* ———— ★ ADDED: EYE APPEAR + BLINK SCRIPT ★ ———— */
-  <!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Another Entry...</title>
+    // brief heavy camera shake effect via transform in CSS keyframes (applied by .burst)
+    // Remove 'burst' class after animation completes
+    setTimeout(()=> body.classList.remove('burst'), 950);
 
-<style>
-    @import url('https://fonts.googleapis.com/css2?family=Special+Elite&display=swap');
+    // make zone visible (keeps visible until clicked)
+    glz.style.visibility = 'visible';
+    glz.style.opacity = '1';
+    // also add a pulsing chromatic glitch quickly
+    glz.animate([
+      { filter: 'hue-rotate(0deg) brightness(1)' },
+      { filter: 'hue-rotate(60deg) brightness(2)' },
+      { filter: 'hue-rotate(-60deg) brightness(.7)' },
+      { filter: 'hue-rotate(10deg) brightness(1.1)' },
+      { filter: 'hue-rotate(0deg) brightness(1)' }
+    ], { duration: 900, iterations: 1, easing: 'cubic-bezier(.36,.07,.19,.97)' });
 
-    body {
-        margin: 0;
-        padding: 0;
-        background: #000;
-        color: #fff;
-        font-family: "Special Elite", monospace;
-        overflow-x: hidden;
-        height: 100vh;
+  }, 12000);
+
+  // click opens the hidden diary overlay
+  glz.addEventListener('click', () => {
+    const hidden = document.getElementById('hidden');
+    hidden.style.display = 'block';
+    hidden.setAttribute('aria-hidden','false');
+    hidden.scrollTop = 0;
+    // small entrance effect
+    setTimeout(()=> hidden.style.opacity = '1', 50);
+  });
+
+  // close button
+  document.getElementById('closeBtn').addEventListener('click', () => {
+    const hidden = document.getElementById('hidden');
+    hidden.style.opacity = '0';
+    hidden.setAttribute('aria-hidden','true');
+    setTimeout(()=> hidden.style.display='none', 400);
+  });
+
+  // accessibility: allow Escape to close
+  document.addEventListener('keydown', e => {
+    if(e.key === 'Escape') {
+      const hidden = document.getElementById('hidden');
+      if(hidden.style.display === 'block') {
+        hidden.style.opacity = '0';
+        hidden.setAttribute('aria-hidden','true');
+        setTimeout(()=> hidden.style.display='none', 400);
+      }
     }
-
-    /* background static */
-    .bg {
-        position: fixed;
-        inset: 0;
-        background: url('static.jpg');
-        background-size: cover;
-        background-repeat: repeat;
-        opacity: 0.08;
-        pointer-events: none;
-        z-index: 1;
-        animation: staticShift 4s infinite linear;
-    }
-
-    @keyframes staticShift {
-        0% { filter: brightness(0.6); }
-        50% { filter: brightness(0.9); }
-        100% { filter: brightness(0.6); }
-    }
-
-    .scribble {
-        position: fixed;
-        inset: 0;
-        background: url('scribble.png') center no-repeat;
-        background-size: contain;
-        opacity: 0.08;
-        pointer-events: none;
-        z-index: 2;
-        animation: scribblePulse 6s infinite ease-in-out;
-    }
-
-    @keyframes scribblePulse {
-        0% { opacity: 0.03; transform: scale(1); }
-        50% { opacity: 0.10; transform: scale(1.03); }
-        100% { opacity: 0.03; transform: scale(1); }
-    }
-
-    .content {
-        position: relative;
-        z-index: 3;
-        padding: 60px;
-        font-size: 18px;
-        line-height: 1.7;
-        text-shadow: 0 0 3px rgba(255,255,255,0.4);
-    }
-
-    /* EYE IMAGE */
-    #eye {
-        position: fixed;
-        bottom: 40px;
-        left: 50%;
-        transform: translateX(-50%) scale(1);
-        width: 160px;
-        opacity: 0;
-        transition: opacity 1s ease;
-        z-index: 5;
-        pointer-events: auto;
-    }
-
-    /* BLINK animation */
-    .blink {
-        animation: blinkAnim 0.28s linear forwards;
-    }
-
-    @keyframes blinkAnim {
-        0% { transform: translateX(-50%) scaleY(1); }
-        50% { transform: translateX(-50%) scaleY(0.05); }
-        100% { transform: translateX(-50%) scaleY(1); }
-    }
-
-    /* Final popup */
-    #finalLore {
-        display: none;
-        position: fixed;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        width: 70%;
-        padding: 25px;
-        background: rgba(0,0,0,0.85);
-        border: 1px solid #a00;
-        color: #fff;
-        font-size: 19px;
-        line-height: 1.7;
-        z-index: 10;
-        text-shadow: 0 0 4px rgba(255,255,255,0.3);
-    }
-
-    #closeFinal {
-        position: absolute;
-        top: 8px;
-        right: 10px;
-        padding: 4px 10px;
-        cursor: pointer;
-        background: rgba(70,0,0,0.6);
-        border: 1px solid #a00;
-        color: #fff;
-    }
-
-</style>
-</head>
-
-<body>
-
-<div class="bg"></div>
-<div class="scribble"></div>
-
-<div class="content">
-    <h2>Another Entry...</h2>
-
-    <p>“ 'i' thought that the Neutral Faction is TRULY NEUTRAL, but NO.. they arent. Maybe in some occassion they are especially knowing that.. they are the one who helped to achieve the peace and ending the war after the conference.. but thats what most of peoples know, theres more in it.. those other stories that they do not know, deep buried in lies.. 'i' saw it with 'my' very own eyes, they slaughtered the Edelyn family without hesitation, driven by uncontrolable anger and other feelings, why bring the childrens too? why pull them, who doesnt kno anything, into your despair? Bloodbath happend, not just that.. some are still working with Light and Dark, doing something unimaginable...”</p>
-</div>
-
-<!-- EYE -->
-<img id="eye" src="eye.png" alt="eye">
-
-<!-- FINAL POPUP -->
-<div id="finalLore">
-    <div id="closeFinal">X</div>
-
-    <p>“The Everdawn, a flower plucked from the deepest memory ever existed, it emits a bright white light around it, which is able to repel and block any kind of VOID magic, even the most PERFECT one. Although the life time of this flower is very limited if brought to real life, it is a very strong flower to counter VOID itself.”</p>
-
-    <p><i>“Reaching Toward Tomorrow.”</i></p>
-</div>
-
-
-<script>
-/* Fade-in eye after 10 seconds */
-setTimeout(() => {
-    document.getElementById("eye").style.opacity = 1;
-}, 10000);
-
-/* Random blinking loop */
-function blinkLoop() {
-    let eye = document.getElementById("eye");
-    eye.classList.add("blink");
-
-    setTimeout(() => eye.classList.remove("blink"), 300);
-
-    // 2–8 sec random interval
-    let next = 2000 + Math.random() * 6000;
-    setTimeout(blinkLoop, next);
-}
-
-/* Start blinking at 12 seconds */
-setTimeout(blinkLoop, 12000);
-
-
-/* Clicking the eye → password prompt */
-document.getElementById("eye").onclick = () => {
-    let pw = prompt("Enter the password:");
-
-    if (!pw) return;
-
-    if (pw.trim() === "Everdawn") {
-        document.getElementById("finalLore").style.display = "block";
-    } else {
-        alert("Incorrect password.");
-    }
-};
-
-/* Close popup */
-document.getElementById("closeFinal").onclick = () => {
-    document.getElementById("finalLore").style.display = "none";
-};
+  });
 
 </script>
-
 </body>
 </html>
