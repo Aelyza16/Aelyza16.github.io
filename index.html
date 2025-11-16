@@ -23,7 +23,7 @@
     -moz-osx-font-smoothing:grayscale;
   }
 
-  /* --- background static (your uploaded static.jpg) --- */
+  /* --- background static --- */
   .bg-static{
     position:fixed;
     inset:0;
@@ -43,7 +43,7 @@
     100% { opacity:0.5; transform: translateZ(0) scale(1); }
   }
 
-  /* --- scribble overlay (your uploaded scribble.png) --- */
+  /* --- scribble overlay --- */
   .scribble{
     position:fixed;
     width:380px;
@@ -83,7 +83,7 @@
     100% { transform: translate(20px,-14px) rotate(9deg); }
   }
 
-  /* --- subtle bleed-through ghost text behind content --- */
+  /* --- subtle bleed-through ghost text --- */
   .bleed {
     position: fixed;
     inset: 0;
@@ -174,7 +174,7 @@
     font-size:1.05rem;
   }
 
-  /* --- glitchy text effect (occasional flash) --- */
+  /* --- glitchy text effect --- */
   .glitch {
     display:block;
     position:relative;
@@ -188,7 +188,7 @@
     100% { text-shadow:none; transform:none; }
   }
 
-  /* --- visible glitch clickable zone (hidden until triggered) --- */
+  /* --- glitch reveal zone --- */
   #glitchZone {
     position: fixed;
     width: 180px;
@@ -205,7 +205,6 @@
     transition: opacity .35s ease, transform .35s ease;
     visibility:hidden;
   }
-
   .reveal-burst #glitchZone {
     visibility:visible;
     opacity:1;
@@ -218,7 +217,6 @@
     70% { box-shadow: 0 0 12px rgba(255,60,60,0.4); transform: scale(.98) rotate(-0.8deg); }
     100% { box-shadow: none; transform: scale(1); }
   }
-
   .burst {
     animation: screenBurst 0.9s linear;
   }
@@ -231,6 +229,7 @@
     100% { filter:none; transform: translate(0) rotate(0); }
   }
 
+  /* --- hidden diary overlay --- */
   #hidden {
     position: fixed;
     inset:0;
@@ -240,7 +239,6 @@
     overflow:auto;
     z-index:400;
     display:none;
-    opacity:0;
   }
   #hidden .close {
     position:fixed;
@@ -255,69 +253,100 @@
     box-shadow:0 4px 18px rgba(0,0,0,0.6);
   }
 
-  /* --- EYE --- */
+  /* --- eye styling & animation --- */
   #eye {
     position: fixed;
-    bottom: 8%;
+    bottom: 40px;
     left: 50%;
-    transform: translate(-50%, 0);
-    width: 160px;
-    opacity: 0;
-    z-index:9999;
+    transform: translateX(-50%) translateY(0);
+    width: 140px;
+    z-index:500;
     cursor:pointer;
-    transition: transform 0.25s ease, filter 0.25s ease, opacity 1s ease;
-  }
-  #eye.blink { transform: translate(-50%, 0) scaleY(0.2); }
-  #eye.float { animation: eyeFloat 3s ease-in-out infinite alternate; }
-  @keyframes eyeFloat { 0%{transform:translate(-50%,0)} 100%{transform:translate(-50%,-6px)} }
-
-  /* --- Final Lore --- */
-  #finalLore {
-    display:none;
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%,-50%);
-    background: rgba(0,0,0,0.85);
-    border:1px solid #a00;
-    color:#fff;
-    padding:25px;
-    font-size:19px;
-    line-height:1.7;
-    z-index:10000;
     opacity:0;
-    text-shadow: 0 0 4px rgba(255,255,255,0.3);
-    transition: opacity 0.5s ease;
+    transition: opacity 1s ease;
   }
-  #finalLore.show { opacity:1; }
-  #closeFinal {
-    position:absolute;
-    top:8px;
-    right:10px;
-    padding:4px 10px;
-    cursor:pointer;
-    background: rgba(70,0,0,0.6);
-    border:1px solid #a00;
-    color:#fff;
+  #eye.float {
+    animation: eyeFloat 3s ease-in-out infinite;
+  }
+  #eye.blink {
+    animation: eyeBlink 0.18s linear forwards;
+  }
+  @keyframes eyeFloat {
+    0% { transform: translateX(-50%) translateY(0); }
+    50% { transform: translateX(-50%) translateY(-6px); }
+    100% { transform: translateX(-50%) translateY(0); }
+  }
+  @keyframes eyeBlink {
+    0% { transform: translateX(-50%) scaleY(1); }
+    50% { transform: translateX(-50%) scaleY(0.2); }
+    100% { transform: translateX(-50%) scaleY(1); }
   }
 
+  /* --- final lore overlay --- */
+  #finalLore {
+    position: fixed;
+    inset:0;
+    background: rgba(0,0,0,0.9);
+    color:#fff;
+    padding:40px;
+    overflow:auto;
+    z-index:500;
+    text-align:center;
+    display:none;
+    opacity:0;
+    transition: opacity 1s ease;
+  }
+  #finalLore.show {
+    opacity:1;
+  }
+  #finalLore p {
+    animation: floatPulse 4s ease-in-out infinite;
+    font-size:1.2rem;
+    margin-bottom:20px;
+  }
+  @keyframes floatPulse {
+    0% { transform: translateY(0) scale(1); }
+    25% { transform: translateY(-4px) scale(1.01); }
+    50% { transform: translateY(0) scale(1); }
+    75% { transform: translateY(3px) scale(1.005); }
+    100% { transform: translateY(0) scale(1); }
+  }
+  #closeFinal {
+    position:fixed;
+    top:20px;
+    right:20px;
+    padding:8px 12px;
+    cursor:pointer;
+    background:rgba(70,0,0,0.6);
+    border:1px solid #a00;
+    color:#fff;
+    border-radius:4px;
+  }
+
+  /* responsive */
   @media(max-width:600px){
     .container{ margin:4vh 12px; padding:22px; font-size:0.98rem;}
     .scribble{ display:none }
     #glitchZone{ width:140px; height:140px; bottom:10%; right:5% }
-    #eye{width:120px}
+    #eye{ width:100px; bottom:30px; }
   }
 </style>
 </head>
 <body>
 
+  <!-- Background & overlays -->
   <div class="bg-static" aria-hidden="true"></div>
   <div class="scribble" aria-hidden="true"></div>
   <div class="scribble s2" aria-hidden="true"></div>
   <div class="scribble s3" aria-hidden="true"></div>
+
+  <!-- bleed-through ghost -->
   <div class="bleed" aria-hidden="true"><span>MEMORIES</span></div>
+
+  <!-- Intro -->
   <div id="intro"><div id="introText">UNFOLDING MEMORIES</div></div>
 
+  <!-- Main diary -->
   <main class="container" role="main" aria-labelledby="main-title">
     <div class="title" id="main-title">[LOG ENTRY — FOUND]</div>
     <div class="glitch">
@@ -327,8 +356,10 @@
     </div>
   </main>
 
+  <!-- Glitch reveal clickable zone -->
   <div id="glitchZone" title="Glitch"></div>
 
+  <!-- Hidden diary overlay -->
   <section id="hidden" role="dialog" aria-hidden="true">
     <button class="close" id="closeBtn">CLOSE</button>
     <h2>Another Entry...</h2>
@@ -338,19 +369,20 @@
   <!-- Eye -->
   <img id="eye" src="eye.png" alt="eye">
 
-  <!-- Final Lore -->
-  <div id="finalLore" aria-hidden="true">
-    <div id="closeFinal">X</div>
+  <!-- Final lore overlay -->
+  <section id="finalLore" role="dialog" aria-hidden="true">
+    <button id="closeFinal">X</button>
     <p>“The Everdawn, a flower plucked from the deepest memory ever existed, it emits a bright white light around it, which is able to repel and block any kind of VOID magic, even the most PERFECT one. Although the life time of this flower is very limited if brought to real life, it is a very strong flower to counter VOID itself.”</p>
-    <p><i>“Reaching Toward Tomorrow.”</i></p>
-  </div>
+    <p style="font-style:italic;">“Reaching Toward Tomorrow.”</p>
+  </section>
 
 <script>
-  // Glitch zone reveal
+  // Glitch reveal zone after 12s
   const glz = document.getElementById('glitchZone');
   const body = document.body;
   setTimeout(() => {
-    body.classList.add('burst','reveal-burst');
+    body.classList.add('burst');
+    body.classList.add('reveal-burst');
     setTimeout(()=> body.classList.remove('burst'), 950);
     glz.style.visibility = 'visible';
     glz.style.opacity = '1';
@@ -363,6 +395,7 @@
     ], { duration: 900, iterations: 1, easing: 'cubic-bezier(.36,.07,.19,.97)' });
   }, 12000);
 
+  // Show hidden diary overlay
   glz.addEventListener('click', () => {
     const hidden = document.getElementById('hidden');
     hidden.style.display = 'block';
@@ -371,13 +404,13 @@
     setTimeout(()=> hidden.style.opacity = '1', 50);
   });
 
+  // Close hidden diary
   document.getElementById('closeBtn').addEventListener('click', () => {
     const hidden = document.getElementById('hidden');
     hidden.style.opacity = '0';
     hidden.setAttribute('aria-hidden','true');
     setTimeout(()=> hidden.style.display='none', 400);
   });
-
   document.addEventListener('keydown', e => {
     if(e.key === 'Escape') {
       const hidden = document.getElementById('hidden');
@@ -389,64 +422,44 @@
     }
   });
 
-  // === EYE ANIMATION & INTERACTION ===
+  // Eye fade-in & floating
   const eye = document.getElementById('eye');
+  setTimeout(() => {
+    eye.style.opacity = '1';
+    eye.classList.add('float');
+    // blinking every 4-5s randomly
+    setInterval(()=>{
+      eye.classList.add('blink');
+      setTimeout(()=> eye.classList.remove('blink'), 180);
+    }, 4000 + Math.random()*1000);
+  }, 13500);
 
-  setTimeout(()=> eye.style.opacity='1', 13000); // show after glitch reveal
-  eye.classList.add('float');
+  // Eye password prompt
+  eye.addEventListener('click', () => {
+    let pw = prompt("Enter the password:");
+    if(!pw) return;
 
-  // Eye blinking every 3–6s
-  function eyeBlink() {
-    eye.classList.add('blink');
-    setTimeout(()=> eye.classList.remove('blink'), 200);
-    setTimeout(eyeBlink, 3000 + Math.random()*3000);
-  }
-  setTimeout(eyeBlink, 1500);
-
-  // Eye click password
-  eye.addEventListener('click', ()=> {
-    const pass = prompt("Enter Password");
-    if(pass && pass.toLowerCase() === 'everdawn'){
-      const final = document.getElementById('finalLore');
-      final.style.display = 'block';
-      final.setAttribute('aria-hidden','false');
-      setTimeout(()=> final.classList.add('show'), 50);
+    if(pw.trim() === "Everdawn") {
+        const finalLore = document.getElementById("finalLore");
+        finalLore.style.display = 'block';
+        finalLore.setAttribute('aria-hidden','false');
+        setTimeout(() => finalLore.classList.add('show'), 50);
+        finalLore.scrollTop = 0;
+    } else {
+        alert("Incorrect password.");
     }
   });
 
-  document.getElementById('closeFinal').addEventListener('click', ()=>{
-    const final = document.getElementById('finalLore');
-    final.classList.remove('show');
-    setTimeout(()=> final.style.display='none', 400);
+  // Close final lore
+  document.getElementById('closeFinal').addEventListener('click', () => {
+    const finalLore = document.getElementById('finalLore');
+    finalLore.classList.remove('show');
+    setTimeout(() => {
+      finalLore.style.display = 'none';
+      finalLore.setAttribute('aria-hidden','true');
+    }, 1000);
   });
 
-  // === AMBIENT EYE GLOW & SCREEN FLICKERS ===
-  function eyeGlowFlicker() {
-    if(!eye) return;
-    const flickerDuration = 150;
-    const nextFlicker = 3000 + Math.random()*4000;
-    eye.style.filter = `brightness(${1 + Math.random() * 0.3})`;
-    eye.style.transform = `translate(-50%, 0) scale(${1 + Math.random()*0.03})`;
-    setTimeout(()=>{
-      eye.style.filter='';
-      eye.style.transform='translate(-50%,0) scale(1)';
-      setTimeout(eyeGlowFlicker, nextFlicker);
-    }, flickerDuration);
-  }
-  setTimeout(eyeGlowFlicker, 5000);
-
-  function screenGlitchFlicker() {
-    const flickerDuration = 120;
-    const nextFlicker = 4000 + Math.random()*5000;
-    body.style.filter = `hue-rotate(${Math.random()*30-15}deg) brightness(${0.9+Math.random()*0.2})`;
-    body.style.transform = `translate(${Math.random()*4-2}px, ${Math.random()*4-2}px)`;
-    setTimeout(()=>{
-      body.style.filter='';
-      body.style.transform='';
-      setTimeout(screenGlitchFlicker, nextFlicker);
-    }, flickerDuration);
-  }
-  setTimeout(screenGlitchFlicker, 6000);
 </script>
 </body>
 </html>
