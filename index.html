@@ -263,6 +263,30 @@
     .scribble{ display:none }
     #glitchZone{ width:140px; height:140px; bottom:10%; right:5% }
   }
+
+  /* --- Eye styles --- */
+  #eye {
+    position: fixed;
+    bottom: 12%; /* adjust as needed */
+    right: 6%;   /* adjust as needed */
+    width: 160px;
+    opacity: 0;
+    z-index:500; /* above most content but below hidden diary overlay */
+    cursor:pointer;
+    pointer-events:auto;
+    transform: scale(1);
+    transform-origin: center bottom;
+    transition: opacity 1s ease;
+  }
+
+  .blink {
+    animation: blinkAnim 0.25s linear forwards;
+  }
+  @keyframes blinkAnim {
+    0%   { transform: scaleY(1); }
+    50%  { transform: scaleY(0.2); }
+    100% { transform: scaleY(1); }
+  }
 </style>
 </head>
 <body>
@@ -302,23 +326,19 @@
     <p>“'i' thought that the Neutral Faction is TRULY NEUTRAL, but NO.. they arent. Maybe in some occassion they are especially knowing that.. they are the one who helped to achieve the peace and ending the war after the conference.. but thats what most of peoples know, theres more in it.. those other stories that they do not know, deep buried in lies.. 'i' saw it with 'my' very own eyes, they slaughtered the Edelyn family without hesitation, driven by uncontrolable anger and other feelings, why bring the childrens too? why pull them, who doesnt kno anything, into your despair? Bloodbath happend, not just that.. some are still working with Light and Dark, doing something unimagineable...”</p>
   </section>
 
+  <!-- EYE -->
+  <img id="eye" src="eye.png" alt="eye">
+
 <script>
-  // After 12s, trigger an aggressive reveal burst and show glitch zone
+  // Original glitch zone script
   const glz = document.getElementById('glitchZone');
   const body = document.body;
   setTimeout(() => {
-    // Apply burst to body for a short time
     body.classList.add('burst');
     body.classList.add('reveal-burst');
-
-    // brief heavy camera shake effect via transform in CSS keyframes (applied by .burst)
-    // Remove 'burst' class after animation completes
     setTimeout(()=> body.classList.remove('burst'), 950);
-
-    // make zone visible (keeps visible until clicked)
     glz.style.visibility = 'visible';
     glz.style.opacity = '1';
-    // also add a pulsing chromatic glitch quickly
     glz.animate([
       { filter: 'hue-rotate(0deg) brightness(1)' },
       { filter: 'hue-rotate(60deg) brightness(2)' },
@@ -326,20 +346,16 @@
       { filter: 'hue-rotate(10deg) brightness(1.1)' },
       { filter: 'hue-rotate(0deg) brightness(1)' }
     ], { duration: 900, iterations: 1, easing: 'cubic-bezier(.36,.07,.19,.97)' });
-
   }, 12000);
 
-  // click opens the hidden diary overlay
   glz.addEventListener('click', () => {
     const hidden = document.getElementById('hidden');
     hidden.style.display = 'block';
     hidden.setAttribute('aria-hidden','false');
     hidden.scrollTop = 0;
-    // small entrance effect
     setTimeout(()=> hidden.style.opacity = '1', 50);
   });
 
-  // close button
   document.getElementById('closeBtn').addEventListener('click', () => {
     const hidden = document.getElementById('hidden');
     hidden.style.opacity = '0';
@@ -347,7 +363,6 @@
     setTimeout(()=> hidden.style.display='none', 400);
   });
 
-  // accessibility: allow Escape to close
   document.addEventListener('keydown', e => {
     if(e.key === 'Escape') {
       const hidden = document.getElementById('hidden');
@@ -359,6 +374,35 @@
     }
   });
 
+  // --- EYE SCRIPT ---
+  setTimeout(() => {
+    const eye = document.getElementById("eye");
+    eye.style.opacity = 1;
+  }, 10000);
+
+  function blinkLoop() {
+    const eye = document.getElementById("eye");
+    eye.classList.add("blink");
+    setTimeout(() => eye.classList.remove("blink"), 260);
+    const next = 2000 + Math.random() * 6000;
+    setTimeout(blinkLoop, next);
+  }
+  setTimeout(blinkLoop, 10500);
+
+  document.getElementById("eye").onclick = () => {
+    let pw = prompt("Enter the password:");
+    if (!pw) return;
+    if (pw.trim() === "Everdawn") {
+        const hidden = document.getElementById('hidden');
+        hidden.style.display = 'block';
+        hidden.setAttribute('aria-hidden','false');
+        hidden.scrollTop = 0;
+        setTimeout(()=> hidden.style.opacity = '1', 50);
+    } else {
+        alert("Incorrect password.");
+    }
+  };
 </script>
+
 </body>
 </html>
