@@ -43,7 +43,7 @@
     100% { opacity:0.5; transform: translateZ(0) scale(1); }
   }
 
-  /* --- scribble overlays --- */
+  /* --- scribble overlay --- */
   .scribble{
     position:fixed;
     width:380px;
@@ -83,7 +83,7 @@
     100% { transform: translate(20px,-14px) rotate(9deg); }
   }
 
-  /* --- bleed-through ghost text --- */
+  /* --- subtle bleed-through ghost text --- */
   .bleed {
     position: fixed;
     inset: 0;
@@ -188,7 +188,7 @@
     100% { text-shadow:none; transform:none; }
   }
 
-  /* --- glitch reveal clickable zone --- */
+  /* --- glitch reveal zone --- */
   #glitchZone {
     position: fixed;
     width: 180px;
@@ -253,39 +253,74 @@
     box-shadow:0 4px 18px rgba(0,0,0,0.6);
   }
 
-  /* --- centered floating eye --- */
-  #eyeWrapper {
+  /* --- eye styling & animation --- */
+  #eye {
     position: fixed;
     bottom: 40px;
     left: 50%;
-    transform: translateX(-50%);
-    z-index: 9999;
-    pointer-events: auto;
-    animation: floatDrift 3.5s ease-in-out infinite alternate;
-  }
-  #eye {
-    width:160px;
-    display:block;
-    pointer-events:auto;
+    transform: translateX(-50%) translateY(0);
+    width: 140px;
+    z-index:500;
+    cursor:pointer;
     opacity:0;
+    transition: opacity 1s ease;
+  }
+  #eye.float {
+    animation: eyeFloat 3s ease-in-out infinite;
+  }
+  #eye.blink {
+    animation: eyeBlink 0.18s linear forwards;
+  }
+  @keyframes eyeFloat {
+    0% { transform: translateX(-50%) translateY(0); }
+    50% { transform: translateX(-50%) translateY(-6px); }
+    100% { transform: translateX(-50%) translateY(0); }
+  }
+  @keyframes eyeBlink {
+    0% { transform: translateX(-50%) scaleY(1); }
+    50% { transform: translateX(-50%) scaleY(0.2); }
+    100% { transform: translateX(-50%) scaleY(1); }
   }
 
-  @keyframes floatDrift {
-    0% { transform: translateX(-50%) translateY(0px) rotate(0deg); }
-    25% { transform: translateX(-50%) translateY(-3px) rotate(-0.2deg); }
-    50% { transform: translateX(-50%) translateY(0px) rotate(0deg); }
-    75% { transform: translateX(-50%) translateY(-2px) rotate(0.1deg); }
-    100% { transform: translateX(-50%) translateY(0px) rotate(0deg); }
+  /* --- final lore overlay --- */
+  #finalLore {
+    position: fixed;
+    inset:0;
+    background: rgba(0,0,0,0.9);
+    color:#fff;
+    padding:40px;
+    overflow:auto;
+    z-index:500;
+    text-align:center;
+    display:none;
+    opacity:0;
+    transition: opacity 1s ease;
   }
-
-  .blink {
-    animation: blinkAnim 0.18s cubic-bezier(0.4,0,0.2,1) forwards;
+  #finalLore.show {
+    opacity:1;
   }
-  @keyframes blinkAnim {
-    0%   { transform: scaleY(1) scaleX(1); }
-    25%  { transform: scaleY(0.25) scaleX(1.1); }
-    50%  { transform: scaleY(1.05) scaleX(0.95); }
-    100% { transform: scaleY(1) scaleX(1); }
+  #finalLore p {
+    animation: floatPulse 4s ease-in-out infinite;
+    font-size:1.2rem;
+    margin-bottom:20px;
+  }
+  @keyframes floatPulse {
+    0% { transform: translateY(0) scale(1); }
+    25% { transform: translateY(-4px) scale(1.01); }
+    50% { transform: translateY(0) scale(1); }
+    75% { transform: translateY(3px) scale(1.005); }
+    100% { transform: translateY(0) scale(1); }
+  }
+  #closeFinal {
+    position:fixed;
+    top:20px;
+    right:20px;
+    padding:8px 12px;
+    cursor:pointer;
+    background:rgba(70,0,0,0.6);
+    border:1px solid #a00;
+    color:#fff;
+    border-radius:4px;
   }
 
   /* responsive */
@@ -293,6 +328,7 @@
     .container{ margin:4vh 12px; padding:22px; font-size:0.98rem;}
     .scribble{ display:none }
     #glitchZone{ width:140px; height:140px; bottom:10%; right:5% }
+    #eye{ width:100px; bottom:30px; }
   }
 </style>
 </head>
@@ -313,12 +349,9 @@
   <!-- Main diary -->
   <main class="container" role="main" aria-labelledby="main-title">
     <div class="title" id="main-title">[LOG ENTRY — FOUND]</div>
-
     <div class="glitch">
       <p>“Memories tend to follow us all around, in the past, in present, even the future.”</p>
-
       <p>“'i' as the representation of 'my' Depression and Emptinesss, has seen everything 'i' have wewnt through, its all nothing but just a painful lies of this world. The Factions, The Wars.. everything is just a mere lie to deceive us from the truth behind their power, they easily took away many innocent lives, including 'my' dearesst parents and 'my' dearest wife. Isnt it cruel? Especially after 'i' decided to try and gave in to the Neutral Faction.. which is naive of me, knowing in the end.. they are also the same as the others.”</p>
-
       <p>“In The End, Its Just a Painful Memories, A Mere Dream No More To Thread.”</p>
     </div>
   </main>
@@ -333,13 +366,18 @@
     <p>“'i' thought that the Neutral Faction is TRULY NEUTRAL, but NO.. they arent. Maybe in some occassion they are especially knowing that.. they are the one who helped to achieve the peace and ending the war after the conference.. but thats what most of peoples know, theres more in it.. those other stories that they do not know, deep buried in lies.. 'i' saw it with 'my' very own eyes, they slaughtered the Edelyn family without hesitation, driven by uncontrolable anger and other feelings, why bring the childrens too? why pull them, who doesnt kno anything, into your despair? Bloodbath happend, not just that.. some are still working with Light and Dark, doing something unimagineable...”</p>
   </section>
 
-  <!-- Centered blinking eye -->
-  <div id="eyeWrapper">
-    <img id="eye" src="eye.png" alt="eye">
-  </div>
+  <!-- Eye -->
+  <img id="eye" src="eye.png" alt="eye">
+
+  <!-- Final lore overlay -->
+  <section id="finalLore" role="dialog" aria-hidden="true">
+    <button id="closeFinal">X</button>
+    <p>“The Everdawn, a flower plucked from the deepest memory ever existed, it emits a bright white light around it, which is able to repel and block any kind of VOID magic, even the most PERFECT one. Although the life time of this flower is very limited if brought to real life, it is a very strong flower to counter VOID itself.”</p>
+    <p style="font-style:italic;">“Reaching Toward Tomorrow.”</p>
+  </section>
 
 <script>
-  // After 12s, trigger glitch zone
+  // Glitch reveal zone after 12s
   const glz = document.getElementById('glitchZone');
   const body = document.body;
   setTimeout(() => {
@@ -357,7 +395,7 @@
     ], { duration: 900, iterations: 1, easing: 'cubic-bezier(.36,.07,.19,.97)' });
   }, 12000);
 
-  // click opens hidden diary overlay
+  // Show hidden diary overlay
   glz.addEventListener('click', () => {
     const hidden = document.getElementById('hidden');
     hidden.style.display = 'block';
@@ -366,15 +404,13 @@
     setTimeout(()=> hidden.style.opacity = '1', 50);
   });
 
-  // close button
+  // Close hidden diary
   document.getElementById('closeBtn').addEventListener('click', () => {
     const hidden = document.getElementById('hidden');
     hidden.style.opacity = '0';
     hidden.setAttribute('aria-hidden','true');
     setTimeout(()=> hidden.style.display='none', 400);
   });
-
-  // escape closes overlay
   document.addEventListener('keydown', e => {
     if(e.key === 'Escape') {
       const hidden = document.getElementById('hidden');
@@ -386,32 +422,44 @@
     }
   });
 
-  // --- Eye Script ---
+  // Eye fade-in & floating
   const eye = document.getElementById('eye');
+  setTimeout(() => {
+    eye.style.opacity = '1';
+    eye.classList.add('float');
+    // blinking every 4-5s randomly
+    setInterval(()=>{
+      eye.classList.add('blink');
+      setTimeout(()=> eye.classList.remove('blink'), 180);
+    }, 4000 + Math.random()*1000);
+  }, 13500);
 
-  // fade in after 10s
-  setTimeout(()=> { eye.style.opacity = '1'; }, 10000);
-
-  // blink loop
-  function blinkLoop() {
-    eye.classList.add('blink');
-    setTimeout(()=> eye.classList.remove('blink'), 180);
-    let next = 2500 + Math.random() * 5000;
-    setTimeout(blinkLoop, next);
-  }
-  setTimeout(blinkLoop, 11000);
-
-  // eye click prompt
+  // Eye password prompt
   eye.addEventListener('click', () => {
     let pw = prompt("Enter the password:");
     if(!pw) return;
+
     if(pw.trim() === "Everdawn") {
-      document.getElementById("hidden").style.display = 'block';
-      document.getElementById("hidden").setAttribute('aria-hidden','false');
+        const finalLore = document.getElementById("finalLore");
+        finalLore.style.display = 'block';
+        finalLore.setAttribute('aria-hidden','false');
+        setTimeout(() => finalLore.classList.add('show'), 50);
+        finalLore.scrollTop = 0;
     } else {
-      alert("Incorrect password.");
+        alert("Incorrect password.");
     }
   });
+
+  // Close final lore
+  document.getElementById('closeFinal').addEventListener('click', () => {
+    const finalLore = document.getElementById('finalLore');
+    finalLore.classList.remove('show');
+    setTimeout(() => {
+      finalLore.style.display = 'none';
+      finalLore.setAttribute('aria-hidden','true');
+    }, 1000);
+  });
+
 </script>
 </body>
 </html>
