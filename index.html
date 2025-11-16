@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>[REDACTED_LOG_ENTRY]</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap');
+
+    body {
+      background: radial-gradient(circle at center, #000 0%, #020202 100%);
+      color: #b8faff;
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 16px;
+      line-height: 1.5;
+      overflow: hidden;
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      text-shadow: 0 0 4px #00fff2, 0 0 8px #00c8ff;
+      animation: flickerBg 6s infinite alternate;
+    }
+
+    @keyframes flickerBg {
+      0%, 100% { background-color: #010101; }
+      50% { background-color: #000000; }
+    }
+
+    .terminal {
+      width: 80%;
+      max-width: 800px;
+      background: rgba(0, 0, 0, 0.7);
+      padding: 30px;
+      border: 1px solid #0ff;
+      box-shadow: 0 0 20px #00ffff33;
+      animation: glitchBorder 2s infinite;
+      position: relative;
+      overflow: hidden;
+    }
+
+    @keyframes glitchBorder {
+      0%, 100% { box-shadow: 0 0 20px #00ffff33; }
+      50% { box-shadow: 0 0 30px #00ffdd99; }
+    }
+
+    .glitch {
+      position: relative;
+      display: inline-block;
+      animation: glitchAnim 3s infinite;
+    }
+
+    @keyframes glitchAnim {
+      0% { text-shadow: 2px 0 red, -2px 0 blue; }
+      20% { text-shadow: -2px 0 red, 2px 0 blue; }
+      40%, 100% { text-shadow: 0 0 2px #00ffff; }
+    }
+
+    .cursor {
+      display: inline-block;
+      width: 8px;
+      background: #00ffff;
+      margin-left: 5px;
+      animation: blink 1s infinite;
+    }
+
+    @keyframes blink {
+      0%, 50% { opacity: 1; }
+      51%, 100% { opacity: 0; }
+    }
+
+    .entry {
+      opacity: 0;
+      animation: fadeIn 3s forwards;
+    }
+
+    @keyframes fadeIn {
+      0% { opacity: 0; filter: blur(8px); }
+      100% { opacity: 1; filter: blur(0); }
+    }
+
+    .scanlines {
+      pointer-events: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: repeating-linear-gradient(
+        to bottom,
+        rgba(0, 255, 255, 0.05) 0px,
+        rgba(0, 255, 255, 0.05) 1px,
+        transparent 2px,
+        transparent 3px
+      );
+      mix-blend-mode: overlay;
+      z-index: 5;
+    }
+  </style>
+</head>
+<body>
+  <div class="scanlines"></div>
+  <div class="terminal">
+    <h2 class="glitch">[LOG ENTRY 47A – “LOST RECORD”]</h2>
+    <p class="entry">
+      The following text was recovered from a corrupted archive fragment.  
+      <br><br>
+      — Transmission begins —  
+      <br><br>
+      “It’s still here… I thought purging the node would erase it. The voice persists within the code, whispering old coordinates.  
+      If anyone reads this, don’t connect to the mainframe again. The others didn’t make it back.”  
+      <br><br>
+      — Transmission ends —  
+      <br><br>
+      <i>[Insert your hidden lore and puzzle clue here later.]</i>
+    </p>
+    <span class="cursor"></span>
+  </div>
+</body>
+</html>
